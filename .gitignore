@@ -17,3 +17,8 @@ dist/
 
 # macOS
 .DS_Store
+
+# Unused Cleo icon alternates — only assets/cleo_icon.png ships in the package.
+# (cleo_icon0.png .. cleo_icon6.png; the canonical icon is cleo_icon.png.)
+assets/cleo_icon[0-9].png
+assets/README.md

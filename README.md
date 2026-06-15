@@ -70,23 +70,50 @@ watchlist: watch, analyze, report, wait, repeat.
 
 ## What you'll see
 
+A real cycle against the hosted endpoint (USDC/WETH 0.05% V3, mainnet). When a
+rug signal trips, Cleo prints the full payload and adds an `⚠ ALERT` line:
+
 ```
 Cleo is watching 1 pool(s) via https://mcp.defimind.ai/mcp
-Cycle every 300s. Analysis only — Cleo reports, you decide.
+Cycle every 60s. Analysis only — Cleo reports, you decide.
 Ctrl-C to stop.
 
-[2026-06-14 14:02:11Z] USDC/WETH 0.05% (V3) — CheckPoolHealth
+[2026-06-15 19:40:25Z] USDC/WETH 0.05% (V3) — CheckPoolHealth
 {
-  ... live pool health (TVL, reserves, concentration, fee tier) ...
+  "version": "V3",
+  "token0_name": "USDC",
+  "token1_name": "WETH",
+  "spot_price": 0.0005474970758436177,
+  "reserve0": 257715436.32933998,
+  "reserve1": 141098.44779007568,
+  "total_liquidity": 6030194.693176328,
+  "tvl_in_token0": 515430872.65867996,
+  "num_lps": 1,
+  "top_lp_share_pct": 1.0,
+  "has_activity": false,
+  "fee_pips": 500,
+  "tvl_in_token1": 282196.89558015135,
+  "tick_current": -75106
 }
 
-[2026-06-14 14:02:12Z] USDC/WETH 0.05% (V3) — DetectRugSignals
+[2026-06-15 19:40:26Z] USDC/WETH 0.05% (V3) — DetectRugSignals
 {
-  ... threshold-based rug-signal read on live on-chain state ...
+  "tvl_suspiciously_low": false,
+  "single_sided_concentration": true,
+  "inactive_with_liquidity": false,
+  "signals_detected": 1,
+  "risk_level": "medium",
+  "details": [
+    "single_sided_concentration: top LP holds 100.0% of supply (threshold 90.0%)",
+    "inactive_with_liquidity: unavailable for V3 (no per-swap history)"
+  ]
 }
+  ⚠ ALERT: rug signal tripped: single_sided_concentration
 ```
 
-*(Replaced with real captured output during the build — see the phase specs.)*
+*(Trimmed for length — `CheckPoolHealth` also returns `total_fee0/1`,
+`num_swaps`, `fee_accrual_rate_recent`; `DetectRugSignals` nests the full
+`pool_health` block.)*
 
 ## How it works
 
@@ -149,7 +176,7 @@ pytest tests/
 
 Optional live gate (hits the real endpoint with a real pool; needs your own RPC):
 ```bash
-DEFIMIND_TEST_RPC_URL="https://eth-mainnet.example/v2/<key>" pytest tests/ -v
+DEFIMIND_TEST_RPC_URL="https://eth-mainnet.example/v2/<key>" pytest tests/test_live.py -v
 ```
 
 ## Roadmap
