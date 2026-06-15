@@ -1,0 +1,19 @@
+# Local config / secrets — may contain an RPC API key. Never commit.
+config.toml
+.env
+
+# Operating notes / scratch (real tool payloads captured during runs).
+notes/
+
+# Virtualenv
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+
+# macOS
+.DS_Store
