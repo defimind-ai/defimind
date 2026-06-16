@@ -1,7 +1,7 @@
 # Client Attribution & Observability — shared spec
 
 *Cross-cutting hand-off spec for Claude Code. Not part of any single MVP phase set —
-it spans **MVP-A** (the `defimind` package / Cleo), **MVP-B** (the hosted widget),
+it spans **MVP-A** (the `defimind` package / StateTwins), **MVP-B** (the hosted widget),
 and the **`defimind-mcp` server** (which does the actual logging). Build the
 server-side half once; each client surface sends its own marker.*
 
@@ -17,7 +17,7 @@ hosted widget, Claude Desktop, Cursor, or `curl` are indistinguishable. This spe
 adds a **rough, free client-attribution signal** so that, in **Railway logs**, you
 can tell *which surface* traffic is coming from:
 
-- traffic from the **`defimind` package (Cleo)** — the installed dev agent (MVP-A)
+- traffic from the **`defimind` package (StateTwins)** — the installed dev agent (MVP-A)
 - traffic from the **hosted widget** — the metered non-dev surface (MVP-B)
 - everything else (generic MCP clients) — untagged
 
@@ -29,7 +29,7 @@ out of control."
 
 - **Not authentication.** A header is trivially spoofable. Anyone can send the same
   string. This tells you what callers *identify as*, not what they provably are.
-- **Not per-user.** All package traffic carries the same `cleo` marker; all widget
+- **Not per-user.** All package traffic carries the same `statetwins` marker; all widget
   traffic carries the same `widget` marker. It distinguishes *surfaces*, not
   *individual users*. ("Which user, how do I bill them" is the deferred paid-tier
   meter — the `hash(key)` ledger — not this.)
@@ -51,17 +51,17 @@ and version. Use a custom header so it doesn't collide with the SDK's own
 `User-Agent` handling:
 
 ```
-X-DeFiMind-Client: cleo/<pkg-version>      # from the defimind package (MVP-A)
+X-DeFiMind-Client: statetwins/<pkg-version> # from the defimind package (MVP-A)
 X-DeFiMind-Client: widget/<widget-version> # from the hosted widget (MVP-B)
 ```
 
 (If setting a custom header isn't cleanly supported by the MCP client transport in
 the installed SDK, fall back to appending the same token to the `User-Agent`, e.g.
-`User-Agent: defimind-cleo/<ver>`. Either works; the server reads whichever is set.)
+`User-Agent: defimind-statetwins/<ver>`. Either works; the server reads whichever is set.)
 
 ### Client half A — `defimind` package (MVP-A)
 
-- Set `X-DeFiMind-Client: cleo/<__version__>` on **every outgoing request**.
+- Set `X-DeFiMind-Client: statetwins/<__version__>` on **every outgoing request**.
 - Do it in the **`client/` submodule** — it's the single chokepoint every call flows
   through, so one change tags all package traffic, automatically, for all modes.
 - Pull the version from `defimind.__version__` so the marker tracks releases.
@@ -72,11 +72,11 @@ the installed SDK, fall back to appending the same token to the `User-Agent`, e.
 
 ### Client half B — hosted widget (MVP-B)
 
-- The widget runs Cleo **server-side** (DeFiMind's infra + RPC). Whatever code makes
+- The widget runs StateTwins **server-side** (DeFiMind's infra + RPC). Whatever code makes
   the endpoint calls there sets `X-DeFiMind-Client: widget/<ver>`.
 - Because the widget reuses the `defimind` package as its engine, the cleanest
   implementation is: the package's `client/` accepts an **optional client-marker
-  override** (default `cleo/<ver>`), and the widget passes `widget/<ver>`. One code
+  override** (default `statetwins/<ver>`), and the widget passes `widget/<ver>`. One code
   path, two markers, set by the caller.
 
 ### Server half — `defimind-mcp` (the part that makes it visible in Railway)
@@ -87,7 +87,7 @@ marker that nothing records.** Separate repo: `/Users/ian_moore/repos/defimind-m
 - On each tool call, read the `X-DeFiMind-Client` header (and/or `User-Agent`).
 - Include it in the per-request **log line** written to stdout/stderr, e.g.:
   ```
-  call tool=CheckPoolHealth client=cleo/0.1.0 pool=0x88e6...5640
+  call tool=CheckPoolHealth client=statetwins/0.1.0 pool=0x88e6...5640
   ```
   (Railway shows stdout/stderr — the printed line is what you grep/filter for.)
 - Default to `client=unknown` (or the raw `User-Agent`) when the header is absent,
@@ -100,7 +100,7 @@ marker that nothing records.** Separate repo: `/Users/ian_moore/repos/defimind-m
 
 ## How you'll use it (Railway)
 
-- Filter Railway logs for `client=cleo` → package/agent traffic (MVP-A signal).
+- Filter Railway logs for `client=statetwins` → package/agent traffic (MVP-A signal).
 - Filter for `client=widget` → hosted-widget traffic (MVP-B signal — the metered
   surface; this is the volume that maps to cost/revenue).
 - `client=unknown` → generic MCP clients (Claude Desktop, Cursor, curl, etc.).

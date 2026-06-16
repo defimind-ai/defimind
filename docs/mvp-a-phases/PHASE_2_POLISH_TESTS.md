@@ -9,7 +9,7 @@
 
 Take the decomposed, working package to release quality: a real README example, a
 proper test suite (offline + optional live gate, mirroring `defimind-mcp`), complete
-`pyproject.toml` metadata, config hygiene, and the Cleo icon. No behavior changes —
+`pyproject.toml` metadata, config hygiene, and the StateTwins icon. No behavior changes —
 this is presentation, testing, and packaging polish.
 
 ## Working directory
@@ -27,7 +27,7 @@ this is presentation, testing, and packaging polish.
    - The config story (`cp config.example.toml config.toml`, set RPC + pools).
    - The "analysis only — you decide" scope boundary, stated clearly.
    - The correct arrow: powered by the DeFiMind MCP endpoint; built on DeFiPy /
-     State Twins. Cleo is the persona; `defimind` is the package.
+     State Twins. StateTwins is the agent; `defimind` is the package.
    - Links resolve: `mcp.defimind.ai`, `defipy.org`, `defimind.ai`, and the State
      Twins arXiv link — **confirm the arXiv ID `2605.11522` resolves** to the real
      paper; fix if not.
@@ -54,15 +54,15 @@ this is presentation, testing, and packaging polish.
      `*.egg-info/`, `build/`, `dist/`.
    - Remove any scratch files from Phases 0–1.
 
-5. **Cleo icon.** Reuse the icon from the `cleo/` prototype
+5. **StateTwins icon.** Reuse the icon from the `cleo/` prototype
    (`/Users/ian_moore/repos/cleo/assets/cleo_icon.png` — the canonical one the cleo
    README referenced). Copy it into `defimind` (e.g. `assets/cleo_icon.png`), and add
    it to the README header (the float-left layout that was tuned in the prototype
    renders cleanly on GitHub's light theme). Do **not** copy the unused
    `cleo_icon0..6.png` alternates.
 
-6. **Voice/consistency pass.** Everything reads `defimind` (package) + `Cleo`
-   (persona). Entry point is `defimind`. Tone is the calm-analyst voice. Grep for
+6. **Voice/consistency pass.** Everything reads `defimind` (package) + `StateTwins`
+   (agent). Entry point is `defimind`. Tone is the calm-analyst voice. Grep for
    stray `clio`/`Clio` and any leftover prototype references.
 
 7. **Clean-env dry run (the real test of this phase).** In a fresh venv / temp dir,
@@ -77,8 +77,8 @@ this is presentation, testing, and packaging polish.
       without the env var.
 - [ ] `pyproject.toml` metadata complete; clean `pip install .` works.
 - [ ] `config.toml` untracked; `.gitignore` complete; no scratch files.
-- [ ] Cleo icon in place and rendering; no unused alternates copied.
-- [ ] No `clio` stragglers; `defimind`/`Cleo` consistent throughout.
+- [ ] StateTwins icon in place and rendering; no unused alternates copied.
+- [ ] No `clio` stragglers; `defimind`/`StateTwins` consistent throughout.
 - [ ] Clean-env `pip install` → real result in a few minutes following only the README.
 
 ## Out of scope for Phase 2

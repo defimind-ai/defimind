@@ -36,7 +36,7 @@ src/defimind/
     report.py
   agents/
     __init__.py
-    cleo.py               # Cleo persona: ties modes + voice + identity together
+    statetwins.py         # StateTwins agent: ties modes + identity together
 ```
 
 ## Where each piece of the Phase-0 logic goes
@@ -50,7 +50,7 @@ The proven functions from `cleo.py` / Phase-0 `_app.py` map cleanly:
 | `tool_args` + `check_alerts` (now wired) + `MONITORING_TOOLS` + per-pool loop | `modes/monitoring.py` |
 | `run_cycle` + `main` loop/sleep/retry | `orchestration/runner.py` |
 | `report_pool` (formatting) | `report/report.py` |
-| Cleo identity, the monitoring intro line, mode selection | `agents/cleo.py` |
+| StateTwins identity, the monitoring intro line, mode selection | `agents/statetwins.py` |
 | `cli.run()` | `cli.py` |
 
 ## The two non-negotiable structural rules
@@ -64,7 +64,7 @@ The proven functions from `cleo.py` / Phase-0 `_app.py` map cleanly:
    - It must **not** import `defimind.config`, `defimind.modes`, etc. Anything it
      needs (the endpoint URL) is **passed in**. Naming should survive extraction:
      `from defimind.client import DefiMindClient` → trivially becomes
-     `from defimind_client import DefiMindClient` later. No "agent"/"cleo" in client
+     `from defimind_client import DefiMindClient` later. No "agent"/"statetwins" in client
      vocabulary — it's a *DeFiMind endpoint client*, caller-agnostic.
 
 2. **No `defipy` / web3 / chain imports anywhere in the package.** Thin client only.
@@ -83,7 +83,7 @@ The proven functions from `cleo.py` / Phase-0 `_app.py` map cleanly:
    `client/` — the single chokepoint every call flows through — set a distinctive
    header on all requests to the endpoint, e.g. `User-Agent: defimind-agent/<version>`
    (read the version from `defimind.__version__`) and/or a custom
-   `X-DeFiMind-Client: cleo/<version>`. Purpose: let the operator see, in the
+   `X-DeFiMind-Client: statetwins/<version>`. Purpose: let the operator see, in the
    endpoint's logs, what share of traffic comes from this package versus other MCP
    clients (Claude Desktop, Cursor, curl, etc.) — which feeds the cost/usage
    monitoring that gates the eventual paid tier (rising package traffic = real demand).
@@ -117,7 +117,7 @@ The proven functions from `cleo.py` / Phase-0 `_app.py` map cleanly:
    run(client, config) -> None` or yielding report items).
 
 5. **`orchestration/runner.py`** — thin: load config (via `config/`), construct the
-   client (via `client/`), select the mode (via `agents/cleo`), run the cycle, sleep,
+   client (via `client/`), select the mode (via `agents/statetwins`), run the cycle, sleep,
    retry-on-cycle-error, handle Ctrl-C. This is the `run_cycle` + `main` loop. Keep
    it small — it is a runner, not a framework.
 
@@ -125,9 +125,9 @@ The proven functions from `cleo.py` / Phase-0 `_app.py` map cleanly:
    printed human-readable block. Isolated here because MVP-C will hook anchoring and
    MVP-B will hook rendering at this layer.
 
-7. **`agents/cleo.py`** — the Cleo persona: the intro/voice line ("Cleo is watching
+7. **`agents/statetwins.py`** — the StateTwins agent: the intro line ("StateTwins is watching
    … analysis only, you decide"), and the binding of which mode(s) run. At MVP-A this
-   is thin (one mode, monitoring), but it's where "it's always Cleo, in modes" lives,
+   is thin (one mode, monitoring), but it's where "it's always StateTwins, in modes" lives,
    so the seam for adding modes is here, not scattered.
 
 8. **`cli.py`** — `run()` parses minimal args (none required beyond maybe
@@ -152,7 +152,7 @@ The proven functions from `cleo.py` / Phase-0 `_app.py` map cleanly:
 
 - [ ] Submodule tree in place; Phase-0 logic decomposed per the table.
 - [ ] `client/` has **zero** outward `defimind` imports; public API is clean and
-      extraction-ready; no agent/cleo vocabulary in it.
+      extraction-ready; no agent/statetwins vocabulary in it.
 - [ ] Every outgoing request carries the identifying client header (set in
       `client/`); the companion `defimind-mcp` server-side logging change is
       recorded as a follow-up task (even if not yet done — it's a separate repo).

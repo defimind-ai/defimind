@@ -1,7 +1,7 @@
 """DeFiMind MCP endpoint client — spin-out-ready.
 
 Imports stdlib + the `mcp` SDK only; nothing from the rest of `defimind`.
-Caller-agnostic: it's a *DeFiMind endpoint client*, not a Cleo/agent thing.
+Caller-agnostic: it's a *DeFiMind endpoint client*, not an agent-specific thing.
 """
 
 from defimind.client.client import DefiMindClient, extract_payload

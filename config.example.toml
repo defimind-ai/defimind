@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Cleo configuration — copy this file to `config.toml` and edit.
+# StateTwins configuration — copy this file to `config.toml` and edit.
 #
 #   cp config.example.toml config.toml
 #
@@ -9,7 +9,7 @@
 
 # Your own RPC endpoint. The DeFiMind server reads chain state THROUGH this URL
 # (bring-your-own-RPC). Use whatever provider you like (Alchemy, Infura, your own
-# node, etc.). This is the only "credential" Cleo touches, and it never leaves
+# node, etc.). This is the only "credential" StateTwins touches, and it never leaves
 # your machine except as a parameter to the DeFiMind endpoint you call.
 rpc_url = "https://eth-mainnet.example.com/v2/YOUR_KEY_HERE"
 

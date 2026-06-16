@@ -17,7 +17,7 @@ from defimind.client import DefiMindClient
 from defimind.config import Config
 from defimind.report import report_pool
 
-# Tools Cleo uses for continuous monitoring.
+# Tools StateTwins uses for continuous monitoring.
 MONITORING_TOOLS = ("CheckPoolHealth", "DetectRugSignals")
 
 # DetectRugSignals represents each rug signal as its OWN top-level boolean key

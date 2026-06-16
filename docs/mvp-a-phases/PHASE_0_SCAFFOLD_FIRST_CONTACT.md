@@ -67,12 +67,12 @@ installs, command runs, real output captured. Structure comes next.
    [project]
    name = "defimind"
    version = "0.1.0"
-   description = "DeFiMind's LP analyst agent (Cleo) — monitors Uniswap positions via the DeFiMind MCP endpoint. Analysis only."
+   description = "DeFiMind's LP analyst agent (StateTwins) — monitors Uniswap positions via the DeFiMind MCP endpoint. Analysis only."
    readme = "README.md"
    requires-python = ">=3.11"
    license = { text = "Apache-2.0" }
    authors = [{ name = "Ian C. Moore" }]
-   keywords = ["defi", "uniswap", "mcp", "agent", "liquidity", "analytics", "cleo"]
+   keywords = ["defi", "uniswap", "mcp", "agent", "liquidity", "analytics", "statetwins"]
    dependencies = ["mcp>=1.27.0"]      # the ONLY runtime dep. NOT defipy.
 
    [project.scripts]

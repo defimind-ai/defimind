@@ -1,7 +1,7 @@
-# MVP-A Phases — `defimind` package (Cleo agent) → public
+# MVP-A Phases — `defimind` package (StateTwins agent) → public
 
 *Hand-off specs for Claude Code. Scope: build the **free, installable `defimind`
-agent package** — with **Cleo** as an agent submodule — from an empty repo to a
+agent package** — with **StateTwins** as an agent submodule — from an empty repo to a
 **public, `pip install`-able** release. The paid tier (`defimind-api`, credit
 ledger, gasless sessions, Stripe, paid-compute gate) is **deferred** — not in this
 phase set.*
@@ -21,8 +21,8 @@ component**, versioned and dependable — not a hackathon artifact.
 
 - **`defimind`** = the installable agent package (`pip install defimind` →
   `defimind` console command).
-- **Cleo** = the agent **persona**, living as a submodule **`defimind.agents.cleo`**.
-  "It's always Cleo, in different modes" — the modes are package capabilities, not
+- **StateTwins** = the agent, living as a submodule **`defimind.agents.statetwins`**.
+  "It's always StateTwins, in different modes" — the modes are package capabilities, not
   forks.
 - The package **consumes** the live `defimind-mcp` endpoint as a thin client. It
   does **not** import `defipy` or do any DeFi math / chain reads locally — that all
@@ -65,7 +65,7 @@ defimind/                         # repo root (defimind-ai/defimind; LICENSE alr
         report.py
       agents/
         __init__.py
-        cleo.py                   # the Cleo persona: wires modes + voice + identity
+        statetwins.py             # the StateTwins agent: wires modes + identity
   tests/
     test_client.py
     test_config.py
@@ -87,7 +87,7 @@ defimind/                         # repo root (defimind-ai/defimind; LICENSE alr
 | Phase | Name | One-line goal | Gate to advance |
 |---|---|---|---|
 | **0** | Package scaffold & first contact | Stand up the `src/defimind` package skeleton + `pyproject.toml`; install it; run the existing `cleo.py` logic against the **live** endpoint and **capture real tool output**. | Package installs (`pip install -e .`); `defimind` command runs the monitoring loop end-to-end; real `CheckPoolHealth`+`DetectRugSignals` payloads captured (resolves the two `[VERIFY]` unknowns). |
-| **1** | Decompose into submodules | Refactor the working logic into `client/`, `config/`, `modes/monitoring`, `orchestration/runner`, `report/`, `agents/cleo`, `cli`. Enforce the two structural rules. Wire alerts to the real fields. | All submodules in place; `client/` has zero outward `defimind` imports; no `defipy` import anywhere; `defimind` command behaves identically to Phase 0; tests pass. |
+| **1** | Decompose into submodules | Refactor the working logic into `client/`, `config/`, `modes/monitoring`, `orchestration/runner`, `report/`, `agents/statetwins`, `cli`. Enforce the two structural rules. Wire alerts to the real fields. | All submodules in place; `client/` has zero outward `defimind` imports; no `defipy` import anywhere; `defimind` command behaves identically to Phase 0; tests pass. |
 | **2** | Package polish & tests | Real README example output; `pyproject.toml` metadata; test suite (offline + optional live gate, mirroring `defimind-mcp`); config hygiene; asset/icon. | `pip install` from a clean env → `defimind` runs to a real result following only the README; `pytest` green; metadata complete. |
 | **3** | Public release | Push `defimind-ai/defimind` public; verify the install-to-result path for an outside user; metadata, links, secret hygiene. | Public repo live; `pip install` (from repo) → real result works for an outside user; no secrets in tree/history. |
 
@@ -97,7 +97,7 @@ Do the phases in order. Do not start a phase until the prior gate is met.
 
 ## Cross-cutting rules (every phase)
 
-- **Analysis only.** Cleo reports; she never trades, rebalances, or moves funds.
+- **Analysis only.** StateTwins reports; it never trades, rebalances, or moves funds.
   No phase changes this. No `execute`/`trade`/`sign-and-send` code path, ever.
 - **Thin client, BYO-RPC, authless.** The package sends a pool address + the user's
   RPC to the live endpoint. No keys, no accounts, no signing for the free agent.
@@ -114,8 +114,8 @@ Do the phases in order. Do not start a phase until the prior gate is met.
   deps, console script, Apache-2.0, arXiv/homepage URLs, real `tests/`.
 - **Secrets discipline.** `config.toml` (holds the user's RPC URL) is git-ignored and
   never committed. Never read or echo a real RPC URL into any doc, commit, or example.
-- **Brand/arrow.** The package is `defimind`; the agent persona is **Cleo**
-  (`defimind.agents.cleo`); it is **powered by** the DeFiMind endpoint (Cleo depends
+- **Brand/arrow.** The package is `defimind`; the agent is **StateTwins**
+  (`defimind.agents.statetwins`); it is **powered by** the DeFiMind endpoint (StateTwins depends
   on DeFiMind, not the reverse).
 
 ## Explicitly deferred (not in this phase set)

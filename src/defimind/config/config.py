@@ -1,4 +1,4 @@
-"""Load and validate Cleo's config.toml.
+"""Load and validate StateTwins' config.toml.
 
 The config path resolves from the current working directory (a packaged install
 has no co-located config). The RPC URL may also come from the RPC_URL

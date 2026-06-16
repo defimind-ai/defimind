@@ -1,12 +1,12 @@
 # defimind
 
-**DeFiMind's analyst agent — Cleo.** She observes your Uniswap liquidity
-positions, consults DeFiMind's hosted analytics, and reports her findings so you can
+**DeFiMind's monitoring agent — StateTwins.** It observes your Uniswap liquidity
+positions, consults DeFiMind's hosted analytics, and reports its findings so you can
 make informed decisions.
 
-She watches and reports. **She does not trade, rebalance, or move funds — you make
-every decision.** Think of her as a tireless quant analyst looking over your
-positions, not a bot that manages your money.
+It watches and reports. **It does not trade, rebalance, or move funds — you make
+every decision.** Think of it as an automated monitor over your positions, not a bot
+that manages your money.
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776ab)](https://www.python.org)
@@ -14,14 +14,14 @@ positions, not a bot that manages your money.
 
 > Powered by **DeFiMind** · [`mcp.defimind.ai`](https://mcp.defimind.ai/mcp) · built on the open-source [DeFiPy](https://defipy.org) **State Twins** substrate.
 
-Cleo is named for the Muse of history — the recorder of the DeFi substrate.
+StateTwins runs on — and is named for — the State Twins substrate: an off-chain replica of on-chain pool state.
 
 ---
 
 ## What this is
 
-`defimind` is an **installable Python agent**. Cleo, its analyst persona, runs a
-loop: she reads the pools you configure, asks the hosted **DeFiMind MCP endpoint** to
+`defimind` is an **installable Python agent**. StateTwins, the agent it ships, runs a
+loop: it reads the pools you configure, asks the hosted **DeFiMind MCP endpoint** to
 inspect them, and reports what comes back — pool health and rug signals on a
 schedule, with the full analysis printed every cycle.
 
@@ -34,7 +34,7 @@ The work is split deliberately:
 - **Nothing here imports DeFiPy or does DeFi math locally.** By design — the math
   lives behind the endpoint, open-source and verifiable at [defipy.org](https://defipy.org).
 
-**Analysis only.** Cleo surfaces information; she never decides or executes. The
+**Analysis only.** StateTwins surfaces information; it never decides or executes. The
 decision is always yours.
 
 ## Install
@@ -58,7 +58,7 @@ cp config.example.toml config.toml
 defimind
 ```
 
-On each cycle, Cleo prints a health + rug-signal read on every pool in your
+On each cycle, StateTwins prints a health + rug-signal read on every pool in your
 watchlist: watch, analyze, report, wait, repeat.
 
 > **Heads up:** you supply your own RPC URL (it may contain an API key). It goes in
@@ -67,11 +67,11 @@ watchlist: watch, analyze, report, wait, repeat.
 ## What you'll see
 
 A real cycle against the hosted endpoint (USDC/WETH 0.05% V3, mainnet). When a
-rug signal trips, Cleo prints the full payload and adds an `⚠ ALERT` line:
+rug signal trips, StateTwins prints the full payload and adds an `⚠ ALERT` line:
 
 ```
-Cleo is watching 1 pool(s) via https://mcp.defimind.ai/mcp
-Cycle every 60s. Analysis only — Cleo reports, you decide.
+StateTwins is watching 1 pool(s) via https://mcp.defimind.ai/mcp
+Cycle every 60s. Analysis only — StateTwins reports, you decide.
 Ctrl-C to stop.
 
 [2026-06-15 19:40:25Z] USDC/WETH 0.05% (V3) — CheckPoolHealth
@@ -130,7 +130,7 @@ The agent is a **client**. The value — chain reads, AMM math, State Twins — 
 the DeFiMind server. The agent stays thin and readable; every analysis is a call to
 DeFiMind's hosted infrastructure. **The math is open; the reports are paid.**
 
-### The tools she calls
+### The tools it calls
 
 The hosted endpoint exposes five tools over Uniswap V2/V3. The default monitoring
 mode uses the two suited to continuous watching:
@@ -153,8 +153,8 @@ Everything the agent needs is in `config.toml` (copy from `config.example.toml`)
 
 ## Scope boundary (please read)
 
-Cleo produces **analysis**, not **advice** and not **action**. She does not tell you
-to enter, exit, or rebalance a position, and she does not transact. She reports the
+StateTwins produces **analysis**, not **advice** and not **action**. It does not tell you
+to enter, exit, or rebalance a position, and it does not transact. It reports the
 current state and risk of your positions; the decision is always yours. This is
 intentional and permanent.
 
@@ -177,7 +177,7 @@ DEFIMIND_TEST_RPC_URL="https://eth-mainnet.example/v2/<key>" pytest tests/test_l
 
 ## Roadmap
 
-`defimind` v0.1 is the free monitoring agent. Cleo is built around **modes** (one
+`defimind` v0.1 is the free monitoring agent. StateTwins is built around **modes** (one
 question-shape each); monitoring ships first, with screening, ensemble, comparative,
 and treasury modes as the package grows. Heavier paid-compute analyses may later be
 offered as a metered tier — a future, opt-in addition, not part of the free agent.

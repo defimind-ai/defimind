@@ -29,11 +29,11 @@ phase ends with the free `defimind` agent genuinely live and installable.
 2. **Commit and push.**
    - `git add -A`, then **re-confirm `config.toml` is excluded** before committing
      (a pushed RPC key is a leaked secret — this is the one irreversible mistake).
-   - Commit (e.g. `"defimind v0.1.0: Cleo monitoring agent (free), installable"`).
+   - Commit (e.g. `"defimind v0.1.0: StateTwins monitoring agent (free), installable"`).
    - `git push -u origin main` (match the actual default branch).
 
 3. **Repo metadata for discoverability** (GitHub):
-   - Description, e.g. *"DeFiMind's LP analyst agent (Cleo). Monitors your Uniswap
+   - Description, e.g. *"DeFiMind's LP analyst agent (StateTwins). Monitors your Uniswap
      positions via the DeFiMind MCP endpoint. Installable, analysis-only."*
    - Topics: `defi`, `uniswap`, `mcp`, `agent`, `liquidity`, `analytics`, `ethereum`.
    - Confirm Apache-2.0 shows in GitHub's UI.

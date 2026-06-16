@@ -15,7 +15,7 @@ from defimind.orchestration.runner import main
 def run() -> None:
     parser = argparse.ArgumentParser(
         prog="defimind",
-        description="Cleo — DeFiMind's LP analyst agent (monitoring). Analysis only.",
+        description="StateTwins — DeFiMind's Uniswap position monitor (monitoring). Analysis only.",
     )
     parser.add_argument(
         "--config",
@@ -27,7 +27,7 @@ def run() -> None:
     try:
         asyncio.run(main(args.config))
     except KeyboardInterrupt:
-        print("\nCleo stopped.")
+        print("\nStateTwins stopped.")
 
 
 if __name__ == "__main__":
