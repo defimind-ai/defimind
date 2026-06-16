@@ -1,7 +1,5 @@
 # defimind
 
-<img src="assets/cleo_icon.png" alt="Cleo" width="165" align="left">
-
 **DeFiMind's analyst agent — Cleo.** She observes your Uniswap liquidity
 positions, consults DeFiMind's hosted analytics, and reports her findings so you can
 make informed decisions.
@@ -9,8 +7,6 @@ make informed decisions.
 She watches and reports. **She does not trade, rebalance, or move funds — you make
 every decision.** Think of her as a tireless quant analyst looking over your
 positions, not a bot that manages your money.
-
-<br clear="left">
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776ab)](https://www.python.org)

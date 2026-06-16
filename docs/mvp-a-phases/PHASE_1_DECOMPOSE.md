@@ -79,6 +79,33 @@ The proven functions from `cleo.py` / Phase-0 `_app.py` map cleanly:
    into it (parsing a tool result is the client's job). Public surface only:
    construct with endpoint, open session, `call_tool`, close. No outward imports.
 
+2a. **Stamp every outgoing request with a client identifier (observability).** In
+   `client/` — the single chokepoint every call flows through — set a distinctive
+   header on all requests to the endpoint, e.g. `User-Agent: defimind-agent/<version>`
+   (read the version from `defimind.__version__`) and/or a custom
+   `X-DeFiMind-Client: cleo/<version>`. Purpose: let the operator see, in the
+   endpoint's logs, what share of traffic comes from this package versus other MCP
+   clients (Claude Desktop, Cursor, curl, etc.) — which feeds the cost/usage
+   monitoring that gates the eventual paid tier (rising package traffic = real demand).
+   - **This is a rough signal, NOT auth and NOT per-user.** A header is spoofable,
+     and every install sends the *same* marker, so it cannot distinguish one user's
+     runs from another's. It answers "how much of my traffic is the package," not
+     "who" or "how do I bill." Per-user attribution is the deferred paid-tier meter.
+   - Keep it in `client/` so it stays caller-agnostic and survives the future
+     spin-out (a standalone `defimind-client` SDK would carry the same header).
+
+   > **Companion change required in a DIFFERENT repo — flag, do not silently skip.**
+   > A header the package *sends* is invisible unless the server *logs* it. The
+   > `defimind-mcp` server (`/Users/ian_moore/repos/defimind-mcp`,
+   > `src/defimind_mcp/server.py`) must be updated to read the incoming
+   > `User-Agent` / `X-DeFiMind-Client` header and include it in its per-request log
+   > line (e.g. `client=defimind-agent/0.1 tool=CheckPoolHealth`), so it surfaces in
+   > **Railway's** stdout/stderr log stream where the operator can filter for it.
+   > Without this server-side half, the package sends a marker nothing records and
+   > Railway shows nothing. This server change is OUT OF SCOPE for the `defimind`
+   > package build itself, but MUST be captured as a follow-up task against
+   > `defimind-mcp` so the observability signal actually works end to end.
+
 3. **`config/config.py`** — `load_config()` and validation. Returns a typed object
    or a validated dict. Config path resolves from CWD (`Path("config.toml")`).
 
@@ -126,6 +153,9 @@ The proven functions from `cleo.py` / Phase-0 `_app.py` map cleanly:
 - [ ] Submodule tree in place; Phase-0 logic decomposed per the table.
 - [ ] `client/` has **zero** outward `defimind` imports; public API is clean and
       extraction-ready; no agent/cleo vocabulary in it.
+- [ ] Every outgoing request carries the identifying client header (set in
+      `client/`); the companion `defimind-mcp` server-side logging change is
+      recorded as a follow-up task (even if not yet done — it's a separate repo).
 - [ ] **No `defipy`/web3/chain import** anywhere in the package.
 - [ ] `check_alerts()` wired to real fields; fires on known-bad, quiet on healthy.
 - [ ] All `[VERIFY]` comments gone.

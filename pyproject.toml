@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "defimind"
-version = "0.1.0"
+version = "0.1.1"
 description = "DeFiMind's LP analyst agent (Cleo) — monitors Uniswap positions via the DeFiMind MCP endpoint. Analysis only."
 readme = "README.md"
 requires-python = ">=3.11"
