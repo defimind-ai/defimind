@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "defimind"
-version = "0.1.1"
+version = "0.1.2"
 description = "StateTwins — DeFiMind's Uniswap position monitor over the MCP endpoint. Analysis only."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -17,7 +17,12 @@ dependencies = ["mcp>=1.27.0"]      # the ONLY runtime dep. NOT defipy.
 defimind = "defimind.cli:run"
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+# Local State Twin rehydration / build / sweep (defimind.client.twin) needs
+# defipy. Kept OUT of the base runtime deps so `pip install defimind` stays
+# mcp-only; pull it with `pip install defimind[twin]`. Pinned to defipy's
+# 2.2.x line to match the snapshot field set BuildStateTwin serializes.
+twin = ["defipy[chain]>=2.2.1,<2.3"]
+dev = ["pytest>=8.0", "defimind[twin]"]
 
 [project.urls]
 Homepage = "https://defimind.ai"
@@ -26,3 +31,9 @@ Paper = "https://arxiv.org/abs/2605.11522"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+# src-layout: put `src` on sys.path so a bare `pytest` can import defimind
+# without an editable install.
+pythonpath = ["src"]
+testpaths = ["tests"]
