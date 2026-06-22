@@ -241,10 +241,11 @@ DEFIMIND_TEST_RPC_URL="https://eth-mainnet.example/v2/<key>" pytest tests/test_l
 
 ## Roadmap
 
-`defimind` v0.1 is the free monitoring agent. StateTwins is built around **modes** (one
-question-shape each); monitoring ships first, with screening, ensemble, comparative,
-and treasury modes as the package grows. Heavier paid-compute analyses may later be
-offered as a metered tier — a future, opt-in addition, not part of the free agent.
+`defimind` v0.2 is the free monitoring agent plus a local State Twin SDK (build a twin
+once, run counterfactuals off the MCP). StateTwins is built around **modes** (one
+question-shape each); monitoring ships first, with screening, comparative, and treasury
+modes as the package grows. Heavier paid-compute analyses may later be offered as a
+metered tier — a future, opt-in addition, not part of the free agent.
 
 ## License
 

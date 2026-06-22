@@ -4,4 +4,4 @@ Thin, framework-less reference client for the hosted DeFiMind MCP endpoint.
 Analysis only: it watches and reports, it does not trade or move funds.
 """
 
-__version__ = "0.1.2"
+__version__ = "0.2.0"

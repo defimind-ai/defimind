@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "defimind"
-version = "0.1.2"
+version = "0.2.0"
 description = "StateTwins — DeFiMind's Uniswap position monitor over the MCP endpoint. Analysis only."
 readme = "README.md"
 requires-python = ">=3.11"
