@@ -4,9 +4,13 @@ Given a connected client + config, build each tool's arguments, call the
 monitoring tools, derive alerts, and report. Print-first: the full payload is
 always shown; alerts are additive.
 
-The endpoint also exposes AnalyzePosition, SimulatePriceMove, and
-CalculateSlippage — adding them is just extending MONITORING_TOOLS (and, if they
-need alerting, check_alerts). Not wired here by design (Phase 1 scope).
+The endpoint exposes eleven tools in total. The two wired here (CheckPoolHealth,
+DetectRugSignals) are the V2/V3 watch tools suited to a continuous loop. The other
+nine are on-demand: eight reactive analysis tools (V2/V3 position/price/slippage,
+plus Balancer and Stableswap position/price/depeg), and BuildStateTwin, which returns
+a serialized State Twin for local, off-MCP analysis. They take different args and pool
+types, so they belong in a future analysis mode, not this monitoring loop. The client
+can already call any of them.
 """
 
 from __future__ import annotations

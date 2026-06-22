@@ -28,11 +28,18 @@ schedule, with the full analysis printed every cycle.
 The work is split deliberately:
 
 - **The agent (this package)** holds the loop: read config, call the endpoint,
-  report, repeat. It's a **thin client** — a few hundred readable lines.
+  report, repeat. It's a **thin client** — a few hundred readable lines, and its
+  only runtime dependency is `mcp`.
 - **The DeFiMind endpoint** does the chain reads (through *your* RPC) and the AMM
   math. The agent sends a pool address and your RPC URL; the server does the rest.
-- **Nothing here imports DeFiPy or does DeFi math locally.** By design — the math
-  lives behind the endpoint, open-source and verifiable at [defipy.org](https://defipy.org).
+- **The monitoring agent does no DeFi math locally** — by design, the math lives
+  behind the endpoint, open-source and verifiable at [defipy.org](https://defipy.org).
+
+Beyond the agent, the package ships a **client SDK** (`defimind.client`) you can
+import directly: a thin MCP transport (`DefiMindClient`) and — with the optional
+`[twin]` extra — a **local State Twin engine**. Pull a twin once via `BuildStateTwin`
+(or your own RPC) and run unlimited counterfactuals locally, off the MCP. See
+[Local State Twins](#local-state-twins-the-twin-extra).
 
 **Analysis only.** StateTwins surfaces information; it never decides or executes. The
 decision is always yours.
@@ -127,19 +134,76 @@ Ctrl-C to stop.
 ```
 
 The agent is a **client**. The value — chain reads, AMM math, State Twins — lives on
-the DeFiMind server. The agent stays thin and readable; every analysis is a call to
-DeFiMind's hosted infrastructure. **The math is open; the reports are paid.**
+the DeFiMind server. The agent stays thin and readable; every analysis the monitoring
+loop runs is a call to DeFiMind's hosted infrastructure. (For local, off-MCP analysis,
+the SDK's [twin engine](#local-state-twins-the-twin-extra) is the exception.) **The
+math is open; the reports are paid.**
 
 ### The tools it calls
 
-The hosted endpoint exposes five tools over Uniswap V2/V3. The default monitoring
-mode uses the two suited to continuous watching:
+The hosted endpoint exposes **eleven tools** across Uniswap V2/V3, Balancer weighted,
+and Curve stableswap pools. StateTwins' monitoring mode uses the two suited to
+continuous watching:
 
 - **`CheckPoolHealth`** — TVL, reserves, LP concentration, recent activity.
 - **`DetectRugSignals`** — threshold-based rug flags on a pool's on-chain state.
 
-The other three — `AnalyzePosition`, `SimulatePriceMove`, `CalculateSlippage` — are
-available at the same endpoint.
+Both are Uniswap V2/V3 tools, so the monitoring mode watches V2/V3 pools. The other
+nine are available on demand at the same endpoint:
+
+- **Uniswap V2/V3:** `AnalyzePosition`, `SimulatePriceMove`, `CalculateSlippage`
+- **Balancer (2-asset weighted):** `AnalyzeBalancerLP`, `SimulateBalancerMove`
+- **Curve stableswap (2-asset plain):** `AnalyzeStableswapLP`, `SimulateStableswapMove`, `AssessDepegRisk`
+- **State twin builder (all four pool types):** `BuildStateTwin` — returns a portable
+  twin for off-MCP analysis (see [Local State Twins](#local-state-twins-the-twin-extra))
+
+The client (`DefiMindClient.call_tool`) can already call any of the eleven; the
+monitoring loop just wires the two watch tools. Surfacing the analysis tools — e.g.
+an on-demand position-analysis mode — is the natural next step as the package grows.
+(The four scenario tools — `SimulatePriceMove`, `SimulateBalancerMove`,
+`SimulateStableswapMove`, `CalculateSlippage` — also accept a vector to sweep a
+grid/curve in one call.)
+
+## Local State Twins (the `[twin]` extra)
+
+The agent above is a thin client — every call is a round-trip to the endpoint. The
+SDK also gives you the **State Twins payoff**: pull a pool's state **once**, then run
+as many counterfactuals as you want **locally, with zero further RPC**.
+
+Install the extra (adds `defipy`; the base agent stays `mcp`-only):
+
+```bash
+pip install "defimind[twin]"
+```
+
+Build once, run N — entirely off the MCP:
+
+```python
+from defimind.client import build, sweep, verify_content_hash
+from defipy.primitives.position import SimulatePriceMove
+
+# `wire` is the JSON returned by the hosted BuildStateTwin tool
+assert verify_content_hash(wire)             # optional integrity check
+exchange = build(wire)                        # rehydrate -> runnable twin (no RPC)
+
+results = sweep(SimulatePriceMove(), exchange, "price_change_pct",
+                [-0.3, -0.1, 0.0, 0.2], position_size_lp=100.0)   # N evals, 0 RPC
+```
+
+Or skip the hosted tool entirely and build the same twin from **your own RPC**:
+
+```python
+from defimind.client import build_from_rpc
+exchange = build_from_rpc("uniswap_v3:0x88e6…", rpc_url)   # pool_id is "<protocol>:<address>"
+```
+
+`defimind.client` is AR-agnostic and carries no outward `defimind` imports — a
+spin-out-ready SDK seed. `verify_content_hash` is pure stdlib (works without the
+extra); `rehydrate` / `build` / `sweep` / `build_from_rpc` need `[twin]`.
+
+> **Honest gap:** a State Twin is single-block **state**. History-derived health
+> metrics (swap counts, fee accrual, LP concentration) aren't in it and stay
+> server-side reads inside `CheckPoolHealth` / `DetectRugSignals`.
 
 ## Configuration
 
